@@ -91,6 +91,10 @@
             }
 
             function fetchContainers() {
+                // Store the currently open logs container ID
+                const openLogsContainer = document.querySelector('.logs-container[style="display: block;"]');
+                const openContainerId = openLogsContainer ? openLogsContainer.id.replace('logs-', '') : null;
+
                 fetch('/containers')
                     .then(response => {
                         if (!response.ok) {
@@ -147,8 +151,8 @@
                                             <i class="bi bi-journal-text"></i> View Logs
                                         </button>
                                     </div>
-                                    <div class="logs-container mt-2" id="logs-${container.id}" style="display: none;">
-                                        <pre class="bg-light p-2 rounded"></pre>
+                                    <div class="logs-container mt-2" id="logs-${container.id}" style="display: ${openContainerId === container.id ? 'block' : 'none'};">
+                                        <pre class="bg-light p-2 rounded">${openContainerId === container.id ? document.querySelector(`#logs-${container.id} pre`).textContent : ''}</pre>
                                     </div>
                                 </div>
                             `;
@@ -358,8 +362,6 @@
 
             // Initial load
             fetchContainers();
-            // Update container status every 5 seconds
-            setInterval(fetchContainers, 5000);
 
             // Add event listener for delete button
             document.addEventListener('click', async (e) => {

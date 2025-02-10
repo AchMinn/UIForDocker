@@ -18,7 +18,6 @@ try:
     client = docker.DockerClient(base_url='unix:///run/docker.sock')
     # Test the connection by listing containers
     containers = client.containers.list()
-    print(f"Connected to Docker. Found {len(containers)} containers.")
 except docker.errors.DockerException as e:
     print(f"Failed to initialize Docker client: {e}")
     client = None

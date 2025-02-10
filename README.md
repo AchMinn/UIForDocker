@@ -29,6 +29,12 @@ cd docker-container-manager
 pip install -r requirements.txt
 ```
 
+3.If you need an environment variable, you can use the following command:
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
 ## Configuration
 
 Make sure Docker daemon is running on your system before starting the application.
