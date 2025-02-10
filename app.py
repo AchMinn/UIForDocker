@@ -15,12 +15,14 @@ def is_port_in_use(port):
 
 # Initialize Docker client
 try:
-    if is_port_in_use(5000):
-        print("Port 5000 is already in use. Please stop any other Flask applications using this port.")
-    client = docker.from_env()
+    client = docker.DockerClient(base_url='unix:///run/docker.sock')
+    # Test the connection by listing containers
+    containers = client.containers.list()
+    print(f"Connected to Docker. Found {len(containers)} containers.")
 except docker.errors.DockerException as e:
     print(f"Failed to initialize Docker client: {e}")
     client = None
+    exit(1)
 
 @app.route('/')
 def index():
