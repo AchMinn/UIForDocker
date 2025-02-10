@@ -91,9 +91,15 @@
             }
 
             function fetchContainers() {
-                // Store the currently open logs container ID
+                // Store the currently open logs container ID and its content
+                let openContainerId = null;
+                let openLogsContent = '';
                 const openLogsContainer = document.querySelector('.logs-container[style="display: block;"]');
-                const openContainerId = openLogsContainer ? openLogsContainer.id.replace('logs-', '') : null;
+                
+                if (openLogsContainer) {
+                    openContainerId = openLogsContainer.id.replace('logs-', '');
+                    openLogsContent = openLogsContainer.querySelector('pre').textContent;
+                }
 
                 fetch('/containers')
                     .then(response => {
@@ -152,7 +158,7 @@
                                         </button>
                                     </div>
                                     <div class="logs-container mt-2" id="logs-${container.id}" style="display: ${openContainerId === container.id ? 'block' : 'none'};">
-                                        <pre class="bg-light p-2 rounded">${openContainerId === container.id ? document.querySelector(`#logs-${container.id} pre`).textContent : ''}</pre>
+                                        <pre class="bg-light p-2 rounded">${openContainerId === container.id ? openLogsContent : ''}</pre>
                                     </div>
                                 </div>
                             `;
