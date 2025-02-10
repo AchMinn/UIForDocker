@@ -1,0 +1,7 @@
+1 - Go to Github : https://github.com/AchMinn/MiniProjetZaid
+2- To test the project, you can use the following files and links :
+    - docker-compose.test.yml
+    - https://github.com/AchMinn/TestDocker ( To test the build and run with git link)
+3 - Enjoy !
+
+
