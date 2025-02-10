@@ -116,32 +116,43 @@
                         }
 
                         data.containers.forEach(container => {
-                            const containerElement = document.createElement('div');
-                            containerElement.className = 'card mb-3';
-                            containerElement.id = `container-${container.id}`;
-                            containerElement.innerHTML = `
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <h5 class="card-title">${container.name}</h5>
-                                            <p class="card-text">
-                                                <small class="text-muted">ID: ${container.id}</small><br>
-                                                <span class="badge bg-${container.status === 'running' ? 'success' : 'secondary'} status-badge">${container.status}</span>
-                                                <small class="text-muted">Image: ${container.image}</small>
-                                            </p>
+                            const containerItem = `
+                                <div class="container-item" data-container-id="${container.id}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1">${container.name}</h5>
+                                            <small class="text-muted">${container.id}</small>
                                         </div>
-                                        <div class="col-md-4 text-end">
-                                            <div class="btn-group" role="group">
-                                                <button onclick="containerAction('${container.id}', 'start')" class="btn btn-success btn-sm">Start</button>
-                                                <button onclick="containerAction('${container.id}', 'stop')" class="btn btn-danger btn-sm">Stop</button>
-                                                <button onclick="containerAction('${container.id}', 'restart')" class="btn btn-warning btn-sm">Restart</button>
-                                                <button onclick="fetchLogs('${container.id}')" class="btn btn-info btn-sm">Logs</button>
-                                            </div>
+                                        <div>
+                                            <button class="btn btn-sm btn-primary start-btn" data-container-id="${container.id}">
+                                                <i class="bi bi-play"></i> Start
+                                            </button>
+                                            <button class="btn btn-sm btn-warning restart-btn" data-container-id="${container.id}">
+                                                <i class="bi bi-arrow-repeat"></i> Restart
+                                            </button>
+                                            <button class="btn btn-sm btn-danger stop-btn" data-container-id="${container.id}">
+                                                <i class="bi bi-stop"></i> Stop
+                                            </button>
+                                            <button class="btn btn-sm btn-danger delete-btn" data-container-id="${container.id}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
                                         </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <span class="badge status-badge ${container.status === 'running' ? 'bg-success' : 'bg-secondary'}">${container.status}</span>
+                                        <span class="badge bg-secondary">${container.image}</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-outline-primary logs-btn" data-container-id="${container.id}">
+                                            <i class="bi bi-journal-text"></i> View Logs
+                                        </button>
+                                    </div>
+                                    <div class="logs-container mt-2" id="logs-${container.id}" style="display: none;">
+                                        <pre class="bg-light p-2 rounded"></pre>
                                     </div>
                                 </div>
                             `;
-                            containersDiv.appendChild(containerElement);
+                            containersDiv.innerHTML += containerItem;
                             
                             // Check container health after adding to the DOM
                             if (container.status === 'running') {
@@ -245,10 +256,10 @@
 
             function checkAllContainersHealth() {
                 const containersDiv = document.getElementById('containers');
-                const containerElements = containersDiv.querySelectorAll('.card');
+                const containerElements = containersDiv.querySelectorAll('.container-item');
                 
                 containerElements.forEach(containerElement => {
-                    const containerId = containerElement.id.replace('container-', '');
+                    const containerId = containerElement.dataset.containerId;
                     checkContainerHealth(containerId);
                 });
             }
@@ -403,6 +414,30 @@
                                 logsContainer.querySelector('pre').textContent = 'Failed to load logs';
                             });
                     }
+                }
+            });
+
+            // Add event listener for start button
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.start-btn')) {
+                    const containerId = e.target.closest('.start-btn').dataset.containerId;
+                    containerAction(containerId, 'start');
+                }
+            });
+
+            // Add event listener for stop button
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.stop-btn')) {
+                    const containerId = e.target.closest('.stop-btn').dataset.containerId;
+                    containerAction(containerId, 'stop');
+                }
+            });
+
+            // Add event listener for restart button
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.restart-btn')) {
+                    const containerId = e.target.closest('.restart-btn').dataset.containerId;
+                    containerAction(containerId, 'restart');
                 }
             });
         </script>
